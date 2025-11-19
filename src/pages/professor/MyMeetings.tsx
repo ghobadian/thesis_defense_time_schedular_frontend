@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { professorAPI } from '../../api/professor.api';
-import { Card } from '../../components/common/Card';
-import { Calendar, Clock, Users, MapPin, CheckCircle, AlertCircle, XCircle, ChevronUp, ChevronDown } from 'lucide-react';
-import {MeetingState, Meeting} from "../../types";
+import React, {useState} from 'react';
+import {useQuery} from '@tanstack/react-query';
+import {professorAPI} from '../../api/professor.api';
+import {Card} from '../../components/common/Card';
+import {AlertCircle, Calendar, CheckCircle, ChevronDown, ChevronUp, Clock, MapPin, Users, XCircle} from 'lucide-react';
+import {Meeting, MeetingState} from "../../types";
 import {TimeSlotComparisonWrapper} from "../../components/professor/TimeSlotComparisonWrapper";
 import {useAuthStore} from "../../store/authStore";
 
@@ -56,28 +56,31 @@ export const MyMeetings: React.FC = () => {
         );
     };
 
+    function getPendingMeetings(meetings: Meeting[]) {
+        return meetings.filter(m =>
+            m.state === MeetingState.JURY_SELECTION || m.state === MeetingState.TIME_SELECTION
+        );
+    }
+
+    function getPastMeetings(meetings: Meeting[]) {
+        const now = new Date();
+        return meetings.filter(m =>
+            m.state === MeetingState.COMPLETED ||
+            (m.state === MeetingState.SCHEDULED && m.selectedTimeSlot?.date && new Date(m.selectedTimeSlot?.date) < now) ||
+            m.state === MeetingState.CANCELED
+        );
+    }
+
     const filterMeetings = (meetings: Meeting[] | undefined) => {
         if (!meetings) return [];
 
-        const now = new Date();
-
         switch (selectedTab) {
             case 'upcoming':
-                return meetings.filter((m: Meeting) =>
-                    m.state === 'SCHEDULED' &&
-                    m.selectedTimeSlot?.date &&
-                    new Date(m.selectedTimeSlot?.date) >= now
-                );
+                return getUpcomingMeetings(meetings)
             case 'pending':
-                return meetings.filter(m =>
-                    m.state === 'JURY_SELECTION' || m.state === 'TIME_SELECTION'
-                );
+                return getPendingMeetings(meetings)
             case 'past':
-                return meetings.filter(m =>
-                    m.state === 'COMPLETED' ||
-                    (m.state === 'SCHEDULED' && m.selectedTimeSlot?.date && new Date(m.selectedTimeSlot?.date) < now) ||
-                    m.state === 'CANCELED'
-                );
+                return getPastMeetings(meetings)
             default:
                 return meetings;
         }
@@ -102,6 +105,15 @@ export const MyMeetings: React.FC = () => {
     }
 
     const filteredMeetings = filterMeetings(meetings);
+
+    function getUpcomingMeetings(meetings: Meeting[]) {
+        const now = new Date();
+        return meetings.filter((m: Meeting) =>
+            m.state === MeetingState.SCHEDULED &&
+            m.selectedTimeSlot?.date &&
+            new Date(m.selectedTimeSlot?.date) >= now
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -128,7 +140,7 @@ export const MyMeetings: React.FC = () => {
                         <span className={`ml-2 py-0.5 px-2 rounded-full text-xs ${
                             selectedTab === 'upcoming' ? 'bg-primary-100 text-primary-600' : 'bg-gray-100 text-gray-600'
                         }`}>
-                            {filterMeetings(meetings).length}
+                            {getUpcomingMeetings(meetings || []).length || 0}
                         </span>
                     </button>
                     <button
@@ -143,7 +155,7 @@ export const MyMeetings: React.FC = () => {
                         <span className={`ml-2 py-0.5 px-2 rounded-full text-xs ${
                             selectedTab === 'pending' ? 'bg-primary-100 text-primary-600' : 'bg-gray-100 text-gray-600'
                         }`}>
-                            {meetings?.filter(m => m.state === 'JURY_SELECTION' || m.state === 'TIME_SELECTION').length || 0}
+                            {getPendingMeetings(meetings || []).length || 0}
                         </span>
                     </button>
                     <button
@@ -158,7 +170,7 @@ export const MyMeetings: React.FC = () => {
                         <span className={`ml-2 py-0.5 px-2 rounded-full text-xs ${
                             selectedTab === 'past' ? 'bg-primary-100 text-primary-600' : 'bg-gray-100 text-gray-600'
                         }`}>
-                            {filterMeetings(meetings).length}
+                            {getPastMeetings(meetings || []).length}
                         </span>
                     </button>
                 </nav>
