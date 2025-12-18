@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { API_BASE_URL } from './config';
-import {Meeting, StudentRegistration} from "../types";
+import {Meeting, StudentUpdateRequest} from "../types";
 
 const getAdminAPI = () => {
     const token = localStorage.getItem('auth-storage');
@@ -20,11 +20,12 @@ interface StudentSearch {
     departmentId?: number;
     page?: number;
     limit?: number;
+    studentType?: string;
 }
 
 export const adminAPI = {
-    registerStudent: async (data: StudentRegistration) => {
-        const response = await getAdminAPI().post('/students/register', data);
+    registerStudent: async (data: StudentUpdateRequest[]) => {
+        const response = await getAdminAPI().post('/students', data);
         return response.data;
     },
 
@@ -80,12 +81,12 @@ export const adminAPI = {
         return response.data;
     },
 
-    getStudentById: async (studentId: string) => {
+    getStudentById: async (studentId: number) => {
         const response = await getAdminAPI().get(`/students/${studentId}`);
         return response.data;
     },
 
-    updateStudent: async (studentId: string, data: any) => {
+    updateStudent: async (studentId: number, data: StudentUpdateRequest) => {
         const response = await getAdminAPI().put(`/students/${studentId}`, data);
         return response.data;
     },

@@ -41,11 +41,6 @@ export const studentAPI = {
         return response.data;
     },
 
-    updateProfile: async (data: { firstName: string; lastName: string; phoneNumber: string }) => {
-        const response = await getStudentAPI().put('/profile', data);
-        return response.data;
-    },
-
     changePassword: async (data: { currentPassword: string; newPassword: string }) => {
         const response = await getStudentAPI().put('/change-password', data);
         return response.data;
@@ -54,5 +49,15 @@ export const studentAPI = {
     getAllProfessors: async () => {
         const response = await getStudentAPI().get('/professors');
         return response.data;
-    }
+    },
+
+    updatePhoneNumber: async (phone: string) => {
+        const response = await getStudentAPI().put('/update-phone', {phoneNumber: phone});
+        return response.data;
+    },
+
+    getProfile: async () => {
+        const response = await getStudentAPI().get("/");
+        return response.data;
+    },
 };

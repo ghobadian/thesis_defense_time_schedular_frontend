@@ -6,6 +6,69 @@ import { Input } from '../../components/common/Input';
 import { adminAPI } from '../../api/admin.api';
 import {Field, Professor, StudentType} from '../../types';
 
+interface ValidationErrors {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    password?: string;
+    studentNumber?: string;
+    departmentId?: string;
+    fieldId?: string;
+    instructorId?: string;
+}
+
+const validators = {
+    email: (value: string): string | undefined => {
+        if (!value.trim()) return 'Email is required';
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) return 'Invalid email format';
+        return undefined;
+    },
+    firstName: (value: string): string | undefined => {
+        if (!value.trim()) return 'First name is required';
+        if (value.trim().length < 2) return 'Min 2 characters';
+        return undefined;
+    },
+    lastName: (value: string): string | undefined => {
+        if (!value.trim()) return 'Last name is required';
+        if (value.trim().length < 2) return 'Min 2 characters';
+        return undefined;
+    },
+    phoneNumber: (value: string): string | undefined => {
+        if (!value.trim()) return 'Phone number is required';
+        if (!/^\+?[0-9]{10,15}$/.test(value.replace(/[\s\-]/g, ''))) {
+            return 'Invalid phone (10-15 digits)';
+        }
+        return undefined;
+    },
+    password: (value: string): string | undefined => {
+        if (!value) return 'Password is required';
+        if (value.length < 8) return 'Min 8 characters';
+        if (!/[A-Z]/.test(value)) return 'Need uppercase letter';
+        if (!/[a-z]/.test(value)) return 'Need lowercase letter';
+        if (!/[0-9]/.test(value)) return 'Need a number';
+        return undefined;
+    },
+    studentNumber: (value: string): string | undefined => {
+        if (!value.trim()) return 'Student number is required';
+        if (!/^\d{5,15}$/.test(value)) return 'Must be 5-15 digits';
+        return undefined;
+    },
+    departmentId: (value: string): string | undefined => {
+        if (!value) return 'Department is required';
+        return undefined;
+    },
+    fieldId: (value: string): string | undefined => {
+        if (!value) return 'Field is required';
+        return undefined;
+    },
+    instructorId: (value: string): string | undefined => {
+        if (!value) return 'Instructor is required';
+        return undefined;
+    },
+};
+
 export const StudentRegistration: React.FC = () => {
     const queryClient = useQueryClient();
     const [formData, setFormData] = useState({
@@ -20,6 +83,8 @@ export const StudentRegistration: React.FC = () => {
         fieldId: '',
         instructorId: '',
     });
+    const [errors, setErrors] = useState<ValidationErrors>({});
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
 
     const { data: departments } = useQuery({
         queryKey: ['departments'],
@@ -41,7 +106,6 @@ export const StudentRegistration: React.FC = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['students'] });
             alert('Student registered successfully!');
-            // Reset form
             setFormData({
                 email: '',
                 firstName: '',
@@ -54,22 +118,77 @@ export const StudentRegistration: React.FC = () => {
                 fieldId: '',
                 instructorId: '',
             });
+            setErrors({});    // Add this
+            setTouched({});   // Add this
         },
         onError: (error: any) => {
             alert(error.response?.data?.message || 'Failed to register student');
         },
     });
 
+    // Validate single field
+    const validateField = (name: keyof ValidationErrors, value: string): string | undefined => {
+        const validator = validators[name];
+        return validator ? validator(value) : undefined;
+    };
+
+// Validate all fields
+    const validateForm = (): ValidationErrors => {
+        const newErrors: ValidationErrors = {};
+        (Object.keys(validators) as Array<keyof ValidationErrors>).forEach((key) => {
+            const error = validateField(key, formData[key]);
+            if (error) newErrors[key] = error;
+        });
+        return newErrors;
+    };
+
+// Handle blur - mark touched and validate
+    const handleBlur = (name: keyof ValidationErrors) => {
+        setTouched(prev => ({ ...prev, [name]: true }));
+        const error = validateField(name, formData[name]);
+        setErrors(prev => ({ ...prev, [name]: error }));
+    };
+
+// Handle change with validation
+    const handleChange = (name: keyof typeof formData, value: string) => {
+        setFormData(prev => ({ ...prev, [name]: value }));
+        if (touched[name]) {
+            const error = validateField(name as keyof ValidationErrors, value);
+            setErrors(prev => ({ ...prev, [name]: error }));
+        }
+    };
+
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        registerMutation.mutate({
+
+        // Mark all as touched
+        const allTouched = Object.keys(validators).reduce((acc, key) => {
+            acc[key] = true;
+            return acc;
+        }, {} as Record<string, boolean>);
+        setTouched(allTouched);
+
+        // Validate
+        const validationErrors = validateForm();
+        setErrors(validationErrors);
+
+        if (Object.keys(validationErrors).length > 0) {
+            return; // Stop if errors exist
+        }
+
+        registerMutation.mutate([{
             ...formData,
             studentNumber: parseInt(formData.studentNumber),
             departmentId: parseInt(formData.departmentId),
             fieldId: parseInt(formData.fieldId),
             instructorId: parseInt(formData.instructorId),
-        });
+        }]);
     };
+
+    const ErrorMessage = ({ error }: { error?: string }) => (
+        error ? <p className="mt-1 text-sm text-red-600">{error}</p> : null
+    );
 
     return (
         <Card title="Register New Student">
@@ -78,47 +197,61 @@ export const StudentRegistration: React.FC = () => {
                     <Input
                         label="First Name"
                         value={formData.firstName}
-                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                        onChange={(e) => handleChange('firstName', e.target.value)}
+                        onBlur={() => handleBlur('firstName')}
                         required
                     />
+                    {touched.firstName && <ErrorMessage error={errors.firstName} />}
                     <Input
                         label="Last Name"
                         value={formData.lastName}
-                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                        onChange={(e) => handleChange('lastName', e.target.value)}
+                        onBlur={() => handleBlur('lastName')}
                         required
                     />
+                    {touched.lastName && <ErrorMessage error={errors.lastName} />}
+
                 </div>
 
                 <Input
                     label="Email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) => handleChange('email', e.target.value)}
+                    onBlur={() => handleBlur('email')}
                     required
                 />
+                {touched.email && <ErrorMessage error={errors.email} />}
+
 
                 <Input
                     label="Phone Number"
                     value={formData.phoneNumber}
-                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                    onChange={(e) => handleChange('phoneNumber', e.target.value)}
+                    onBlur={() => handleBlur('phoneNumber')}
                     required
                 />
+                {touched.phoneNumber && <ErrorMessage error={errors.phoneNumber} />}
 
                 <Input
                     label="Password"
                     type="password"
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={(e) => handleChange('password', e.target.value)}
+                    onBlur={() => handleBlur('password')}
                     required
                 />
+                {touched.password && <ErrorMessage error={errors.password} />}
 
                 <Input
                     label="Student Number"
-                    type="number"
+                    type="text"
                     value={formData.studentNumber}
-                    onChange={(e) => setFormData({ ...formData, studentNumber: e.target.value })}
+                    onChange={(e) => handleChange('studentNumber', e.target.value)}
+                    onBlur={() => handleBlur('studentNumber')}
                     required
                 />
+                {touched.studentNumber && <ErrorMessage error={errors.studentNumber} />}
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">

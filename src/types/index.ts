@@ -44,6 +44,7 @@ export interface User {
     firstName: string;
     lastName: string;
     phoneNumber: string;
+    password: String;
     role: UserRole;
 }
 
@@ -57,16 +58,16 @@ export interface Student extends User {
     isGraduated: boolean;
 }
 
-export interface StudentRegistration {
-    firstName: String;
-    lastName: String;
-    phoneNumber: String;
+export interface StudentUpdateRequest {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
     studentNumber: number;
     studentType: StudentType;
     departmentId: number;
     fieldId: number;
     instructorId: number;
-    password: string;
+    password?: string;
 }
 
 export interface Professor extends User {
@@ -97,7 +98,7 @@ export interface Field {
 }
 
 export interface ThesisForm {
-    fieldName: String;
+    fieldName: string;
     id: number;
     title: string;
     abstractText: string;

@@ -1,7 +1,7 @@
 // src/components/admin/students/StudentTable.tsx
 import React from 'react';
 import { StudentTableRow } from './StudentTableRow';
-import {Student} from "../../types";
+import { Student } from "../../types";
 
 interface StudentTableProps {
     students: Student[];
@@ -42,6 +42,9 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                             Department / Field
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Student Type
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Contact
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -68,7 +71,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={6} className="text-center py-8 text-gray-500">
+                            <td colSpan={7} className="text-center py-8 text-gray-500">
                                 No students found
                             </td>
                         </tr>

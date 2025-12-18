@@ -1,10 +1,10 @@
 // src/components/admin/students/StudentTableRow.tsx
 import React from 'react';
 import { GraduationCap, Mail, Phone, Eye, Edit, Trash2 } from 'lucide-react';
-import {Student} from "../../types";
+import { Student, StudentType } from "../../types";
 
 interface StudentTableRowProps {
-    student: Student
+    student: Student;
     onView: () => void;
     onEdit: () => void;
     onDelete: () => void;
@@ -29,8 +29,41 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
         }
     };
 
+    // Helper function to get student type display info
+    const getStudentTypeInfo = (type: StudentType) => {
+        switch (type) {
+            case StudentType.BACHELOR:
+                return {
+                    label: 'Bachelor',
+                    color: 'bg-indigo-100 text-indigo-800',
+                    shortLabel: 'BSc'
+                };
+            case StudentType.MASTER:
+                return {
+                    label: 'Master',
+                    color: 'bg-purple-100 text-purple-800',
+                    shortLabel: 'MSc'
+                };
+            case StudentType.PHD:
+                return {
+                    label: 'PhD',
+                    color: 'bg-amber-100 text-amber-800',
+                    shortLabel: 'PhD'
+                };
+            default:
+                return {
+                    label: 'Unknown',
+                    color: 'bg-gray-100 text-gray-800',
+                    shortLabel: 'N/A'
+                };
+        }
+    };
+
+    const studentTypeInfo = getStudentTypeInfo(student.studentType);
+
     return (
         <tr className="hover:bg-gray-50">
+            {/* Student Info */}
             <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10 bg-primary-100 rounded-full flex items-center justify-center">
@@ -46,6 +79,8 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
                     </div>
                 </div>
             </td>
+
+            {/* Department / Field */}
             <td className="px-6 py-4 whitespace-nowrap">
                 <div className="text-sm text-gray-900">
                     {student.department?.name || 'N/A'}
@@ -54,6 +89,15 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
                     {student.field?.name || 'N/A'}
                 </div>
             </td>
+
+            {/* Student Type - NEW COLUMN */}
+            <td className="px-6 py-4 whitespace-nowrap">
+                <span className={`px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${studentTypeInfo.color}`}>
+                    {studentTypeInfo.label}
+                </span>
+            </td>
+
+            {/* Contact */}
             <td className="px-6 py-4 whitespace-nowrap">
                 <div className="flex items-center space-x-3">
                     <a
@@ -74,14 +118,20 @@ export const StudentTableRow: React.FC<StudentTableRowProps> = ({
                     )}
                 </div>
             </td>
+
+            {/* Status */}
             <td className="px-6 py-4 whitespace-nowrap">
                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(student.isGraduated ? 'GRADUATED' : 'ACTIVE')}`}>
                     {student.isGraduated ? 'Graduated' : 'Active'}
                 </span>
             </td>
+
+            {/* Registered Date */}
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {new Date(student.creationDate).toLocaleDateString()}
             </td>
+
+            {/* Actions */}
             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <div className="flex items-center justify-end space-x-2">
                     <button
