@@ -21,11 +21,6 @@ export const AdminHome: React.FC = () => {
         queryFn: adminAPI.getStats,
     });
 
-    const { data: recentActivities, isLoading: loadingActivities } = useQuery({
-        queryKey: ['recentActivities'],
-        queryFn: adminAPI.getRecentActivities,
-    });
-
     const { data: departments, isLoading: loadingDepartments } = useQuery({
         queryKey: ['departments'],
         queryFn: adminAPI.getDepartments,
@@ -144,88 +139,6 @@ export const AdminHome: React.FC = () => {
                     )}
                 </div>
             </Card>
-
-            {/* Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card title="Recent Registrations">
-                    <div className="space-y-3">
-                        {loadingActivities ? (
-                            <div className="text-center py-8 text-gray-600">Loading activities...</div>
-                        ) : recentActivities?.registrations?.length > 0 ? (
-                            recentActivities.registrations.slice(0, 5).map((activity: any) => (
-                                <div
-                                    key={activity.id}
-                                    className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0"
-                                >
-                                    <div className="flex items-center space-x-3">
-                                        <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                            <GraduationCap className="h-5 w-5 text-blue-600" />
-                                        </div>
-                                        <div>
-                                            <p className="font-medium text-gray-900">
-                                                {activity.firstName} {activity.lastName}
-                                            </p>
-                                            <p className="text-sm text-gray-500">{activity.email}</p>
-                                        </div>
-                                    </div>
-                                    <span className="text-xs text-gray-500">
-                    {new Date(activity.createdAt).toLocaleDateString()}
-                  </span>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-center py-8 text-gray-500">
-                                No recent registrations
-                            </div>
-                        )}
-                    </div>
-                </Card>
-
-                <Card title="Recent Thesis Submissions">
-                    <div className="space-y-3">
-                        {loadingActivities ? (
-                            <div className="text-center py-8 text-gray-600">Loading activities...</div>
-                        ) : recentActivities?.submissions?.length > 0 ? (
-                            recentActivities.submissions.slice(0, 5).map((submission: any) => (
-                                <div
-                                    key={submission.id}
-                                    className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0"
-                                >
-                                    <div className="flex items-center space-x-3">
-                                        <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">
-                                            <FileText className="h-5 w-5 text-green-600" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="font-medium text-gray-900 truncate">
-                                                {submission.title}
-                                            </p>
-                                            <p className="text-sm text-gray-500">
-                                                {submission.student?.firstName} {submission.student?.lastName}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col items-end">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        submission.state === 'SUBMITTED' ? 'bg-yellow-100 text-yellow-800' :
-                            submission.state.includes('APPROVED') ? 'bg-green-100 text-green-800' :
-                                'bg-red-100 text-red-800'
-                    }`}>
-                      {submission.state.replace(/_/g, ' ')}
-                    </span>
-                                        <span className="text-xs text-gray-500 mt-1">
-                      {new Date(submission.createdAt).toLocaleDateString()}
-                    </span>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-center py-8 text-gray-500">
-                                No recent submissions
-                            </div>
-                        )}
-                    </div>
-                </Card>
-            </div>
 
             {/* System Health */}
             <Card title="System Health">
