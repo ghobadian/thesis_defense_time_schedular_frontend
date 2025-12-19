@@ -28,7 +28,7 @@ export const professorAPI = {
     },
 
     rejectThesisForm: async (formId: number, rejectionReason: string) => {
-        const response = await getProfessorAPI().post(`/forms/reject`, { formId, reason: rejectionReason });
+        const response = await getProfessorAPI().post(`/forms/reject`, { formId: formId, rejectionReason: rejectionReason });
         return response.data;
     },
 

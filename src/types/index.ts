@@ -14,7 +14,7 @@ export enum StudentType {
 export enum FormState {
     SUBMITTED = 'SUBMITTED',
     INSTRUCTOR_APPROVED = 'INSTRUCTOR_APPROVED',
-    INSTRUCTOR_REJECTED = 'INSTRUCTOR_APPROVED',
+    INSTRUCTOR_REJECTED = 'INSTRUCTOR_REJECTED',
     ADMIN_APPROVED = 'ADMIN_APPROVED',
     ADMIN_REJECTED = 'ADMIN_REJECTED',
     MANAGER_APPROVED = 'MANAGER_APPROVED',
@@ -115,7 +115,13 @@ export interface ThesisForm {
     suggestedJuryIds: number[];
     createdAt: string;
     updatedAt: string;
+    rejectionReason?: string;
+    submittedAt?: string;
+    instructorReviewedAt?: string;
+    adminReviewedAt?: string;
+    managerReviewedAt?: string;
 }
+
 
 export interface TimeSlot {
     id: number;

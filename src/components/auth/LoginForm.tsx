@@ -133,11 +133,11 @@ export const LoginForm: React.FC = () => {
                         <div className="text-xs bg-blue-50 p-3 rounded">
                             <p className="font-medium text-blue-800 mb-1">Department Managers:</p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mb-2">
-                                <div>• Reza Mohammadi - r.mohammadi@university.ac.ir</div>
-                                <div>• Ahmad Mousavi - a.mousavi@university.ac.ir</div>
-                                <div>• Parisa Rahmani - p.rahmani@university.ac.ir</div>
-                                <div>• Neda Hashemi - n.hashemi@university.ac.ir</div>
-                                <div>• Kamran Azizi - k.azizi@university.ac.ir</div>
+                                <div>• Reza Mohammadi - r.mohammadi@university.ac.ir (Computer Engineering)</div>
+                                <div>• Ahmad Mousavi - a.mousavi@university.ac.ir (Electrical Engineering)</div>
+                                <div>• Parisa Rahmani - p.rahmani@university.ac.ir (Mechanical Engineering)</div>
+                                <div>• Neda Hashemi - n.hashemi@university.ac.ir (Civil Engineering)</div>
+                                <div>• Kamran Azizi - k.azizi@university.ac.ir (Industrial Engineering)</div>
                             </div>
                             <p className="font-medium text-blue-800 mb-1">Regular Professors:</p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
