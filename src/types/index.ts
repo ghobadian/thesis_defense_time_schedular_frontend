@@ -52,13 +52,13 @@ export interface User {
     phoneNumber: string;
     password: String;
     role: UserRole;
+    field: Field;
 }
 
 export interface Student extends User {
     studentNumber: number;
     studentType: StudentType;
     department: DepartmentSummary;
-    field: Field;
     instructor: Professor;
     creationDate: string;
     isGraduated: boolean;
@@ -78,7 +78,7 @@ export interface StudentUpdateRequest {
 
 export interface Professor extends User {
     department: DepartmentSummary;
-    isManager: boolean;
+    manager: boolean;
 }
 
 export interface Admin extends User {}
@@ -204,4 +204,22 @@ export enum RevisionTarget {
     STUDENT = 'STUDENT',
     INSTRUCTOR = 'INSTRUCTOR',
     ADMIN = 'ADMIN'
+}
+
+export interface ProfessorSearch {
+    search?: string;
+    departmentId?: number;
+    page?: number;
+    limit?: number;
+}
+
+export interface ProfessorRegistrationInput {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    departmentId: number;
+    fieldId: number;
+    password: string;
+    manager: boolean;
 }

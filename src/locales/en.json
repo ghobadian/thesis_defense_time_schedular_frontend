@@ -80,6 +80,7 @@
     },
     "admin": {
       "students-management": "Students Management",
+      "professors-management": "Professors Management",
       "departments-management": "Departments Management",
       "fields-management": "Fields Management"
     },

@@ -10,6 +10,7 @@ import {Departments} from "./Departments";
 import AdminFieldsPage from "./AdminFieldsPage";
 import StudentEdit from './StudentEdit';
 import {ProfilePage} from "../student/ProfilePage";
+import ProfessorManagement from "./ProfessorManagement";
 
 export const AdminDashboard: React.FC = () => {
     return (
@@ -19,6 +20,7 @@ export const AdminDashboard: React.FC = () => {
                 <Route path="register-student" element={<StudentRegistration />} />
                 <Route path="*" element={<AdminHome />} />
                 <Route path="students" element={<StudentManagement />} />
+                <Route path="professors" element={<ProfessorManagement />} />
                 <Route path="departments" element={<Departments />} />
                 <Route path="fields" element={<AdminFieldsPage />} />
                 <Route path="thesis-forms" element={<AdminThesisFormsPage />} />

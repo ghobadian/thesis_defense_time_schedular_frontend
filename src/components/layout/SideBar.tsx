@@ -23,6 +23,7 @@ export const Sidebar: React.FC = () => {
         return [
           { to: '/admin/dashboard', icon: Home, label: t('dashboard') },
           { to: '/admin/students', icon: Users, label: t('users.admin.students-management') },
+          { to: '/admin/professors', icon: Users, label: t('users.admin.professors-management') },
           { to: '/admin/departments', icon: Building2, label: t('users.admin.departments-management') },
           { to: '/admin/fields', icon: ClipboardList, label: t('users.admin.fields-management') },
           { to: '/admin/thesis-forms', icon: FileText, label: t('form.thesis-forms') },

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { API_BASE_URL } from './config';
-import {Meeting, RevisionTarget, StudentUpdateRequest} from "../types";
+import {Meeting, ProfessorRegistrationInput, ProfessorSearch, RevisionTarget, StudentUpdateRequest} from "../types";
 
 const getApi = () => {
     const token = localStorage.getItem('auth-storage');
@@ -24,13 +24,35 @@ interface StudentSearch {
 }
 
 export const adminAPI = {
-    registerStudent: async (data: StudentUpdateRequest[]) => {
-        const response = await getApi().post('/students', data);
-        return response.data;
-    },
+
 
     getAllProfessors: async () => {
         const response = await getApi().get('/professors/all');
+        return response.data;
+    },
+
+    registerProfessor: async (data: ProfessorRegistrationInput[]) => {
+        const response = await getApi().post('/professors', data);
+        return response.data;
+    },
+
+    getProfessors: async (params: ProfessorSearch) => {
+        const response = await getApi().get('/professors', { params });
+        return response.data;
+    },
+
+    getProfessorById: async (id: number) => {
+        const response = await getApi().get(`/professors/${id}`);
+        return response.data;
+    },
+
+    updateProfessor: async (id: number, data: Omit<ProfessorRegistrationInput, 'password'>) => {
+        const response = await getApi().put(`/professors/${id}`, data);
+        return response.data;
+    },
+
+    deleteProfessor: async (id: number) => {
+        const response = await getApi().delete(`/professors/${id}`);
         return response.data;
     },
 
@@ -74,6 +96,11 @@ export const adminAPI = {
 
     getDepartments: async () => {
         const response = await getApi().get('/departments');
+        return response.data;
+    },
+
+    registerStudent: async (data: StudentUpdateRequest[]) => {
+        const response = await getApi().post('/students', data);
         return response.data;
     },
 
